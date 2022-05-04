@@ -1,0 +1,7 @@
+{
+  "parent": "block/cube_column",
+  "textures": {
+    "end": "autocomposter:block/autocomposter_top",
+    "side": "autocomposter:block/autocomposter_side_0"
+  }
+}
