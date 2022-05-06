@@ -40,8 +40,10 @@ public class AutoComposterScreen extends AbstractContainerScreen<AutoComposterMe
         int level = menu.getCompostLevel();
         x += 128;
         y += 29;
-        if(level > 0){
-            int height = (int)(24.0f * menu.getCompostLevel() / 7);
+        if(level == 8){
+            this.blit(matrixStack, x, y, 24, 165, 24, 24);
+        } else if(level > 0){
+            int height = (int)(24.0f * level / 7);
             int offset = 24 - height;
             int resOffset = 165 + offset;
             this.blit(matrixStack, x, y + offset, 0, resOffset, 24, height);

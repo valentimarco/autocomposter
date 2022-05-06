@@ -31,7 +31,7 @@ public class AutoComposter extends Block implements EntityBlock {
     public static final String BLOCK_ID = "autocomposter";
 
     public AutoComposter(){
-        super(BlockBehaviour.Properties.of(Material.METAL).strength(1.0f));
+        super(BlockBehaviour.Properties.of(Material.METAL).strength(1.0f).noOcclusion());
         this.registerDefaultState(this.stateDefinition.any().setValue(BlockStateProperties.LEVEL_COMPOSTER, 0));
     }
 

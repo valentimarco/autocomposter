@@ -2,5 +2,6 @@
   "item.autocomposter.autocomposter": "自動堆肥桶",
   "item.autocomposter.powercomposter": "工業堆肥桶",
   "block.autocomposter.autocomposter": "自動堆肥桶",
-  "block.autocomposter.powercomposter": "工業堆肥桶"
+  "block.autocomposter.powercomposter": "工業堆肥桶",
+  "itemGroup.autocomposter": "自動堆肥桶"
 }

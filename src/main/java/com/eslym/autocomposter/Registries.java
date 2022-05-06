@@ -31,7 +31,7 @@ public final class Registries {
     public static final class Items {
         private static final DeferredRegister<Item> REGISTRIES = DeferredRegister.create(ForgeRegistries.ITEMS, MODID);
 
-        public static final RegistryObject<Item> AUTO_COMPOSTER = REGISTRIES.register(AutoComposter.BLOCK_ID, () -> new BlockItem(Blocks.AUTO_COMPOSTER.get(), new Item.Properties().tab(CreativeModeTab.TAB_DECORATIONS)));
+        public static final RegistryObject<Item> AUTO_COMPOSTER = REGISTRIES.register(AutoComposter.BLOCK_ID, () -> new BlockItem(Blocks.AUTO_COMPOSTER.get(), new Item.Properties().tab(AutoComposterMod.CREATIVE_TAB)));
     }
     public static final class Blocks {
         private static final DeferredRegister<Block> REGISTRIES = DeferredRegister.create(ForgeRegistries.BLOCKS, MODID);

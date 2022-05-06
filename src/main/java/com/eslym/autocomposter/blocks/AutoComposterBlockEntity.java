@@ -52,46 +52,53 @@ public class AutoComposterBlockEntity extends BlockEntity {
         this.tickPull(world, pos);
         this.tickComposter(world, pos);
         this.tickPush(world, pos);
-        if(transferCoolDown == 0){
+        if (transferCoolDown == 0) {
             transferCoolDown = getTransferCoolDown();
         } else {
             transferCoolDown--;
         }
     }
 
-    protected void tickComposter(Level world, BlockPos pos){
-        if(consumeCoolDown > 0){
-            consumeCoolDown--;
-            return;
-        }
+    protected void tickComposter(Level world, BlockPos pos) {
         int level = getBlockState().getValue(BlockStateProperties.LEVEL_COMPOSTER);
-        if(level == 7){
-            if(compostCoolDown > 0){
-                compostCoolDown--;
-                return;
-            }
-            for (int i = 5; i < 10; i++) {
-                ItemStack stack = contents.getStackInSlot(i);
-                if(stack.isEmpty() || stack.getCount() < contents.getSlotLimit(i)){
-                    world.playSound(null, pos, SoundEvents.COMPOSTER_EMPTY, SoundSource.BLOCKS, 1.0F, 1.0F);
-                    BlockState state = getBlockState().setValue(BlockStateProperties.LEVEL_COMPOSTER, 0);
-                    ItemStack newItem = new ItemStack(Items.BONE_MEAL, stack.getCount() + 1);
-                    contents.setStackInSlot(i, newItem);
-                    world.setBlockAndUpdate(pos, state);
-                    compostCoolDown = getCompostCoolDown();
-                    afterCompost();
-                    break;
+        if (level == 8) {
+            if (transferCoolDown == 0) {
+                for (int i = 5; i < 10; i++) {
+                    ItemStack stack = contents.getStackInSlot(i);
+                    if (stack.isEmpty() || stack.getCount() < contents.getSlotLimit(i)) {
+                        ItemStack newItem = new ItemStack(Items.BONE_MEAL, stack.getCount() + 1);
+                        contents.setStackInSlot(i, newItem);
+                        world.playSound(null, pos, SoundEvents.COMPOSTER_EMPTY, SoundSource.BLOCKS, 1.0F, 1.0F);
+                        BlockState state = getBlockState().setValue(BlockStateProperties.LEVEL_COMPOSTER, 0);
+                        world.setBlockAndUpdate(pos, state);
+                        break;
+                    }
                 }
             }
             return;
+        } else if (level == 7) {
+            if (compostCoolDown > 0) {
+                compostCoolDown--;
+                return;
+            }
+            world.playSound(null, pos, SoundEvents.COMPOSTER_READY, SoundSource.BLOCKS, 1.0F, 1.0F);
+            BlockState state = getBlockState().setValue(BlockStateProperties.LEVEL_COMPOSTER, 8);
+            world.setBlockAndUpdate(pos, state);
+            compostCoolDown = getCompostCoolDown();
+            afterCompost();
+            return;
         }
-        for (int i = 0; i < 5; i ++ ){
+        if (consumeCoolDown > 0) {
+            consumeCoolDown--;
+            return;
+        }
+        for (int i = 0; i < 5; i++) {
             ItemStack stack = contents.extractItem(i, 1, false);
-            if(stack.isEmpty()){
+            if (stack.isEmpty()) {
                 continue;
             }
             float chance = getChance(stack.getItem());
-            if(world.getRandom().nextDouble() < chance){
+            if (world.getRandom().nextDouble() < chance) {
                 BlockState state = getBlockState().setValue(BlockStateProperties.LEVEL_COMPOSTER, level + 1);
                 world.setBlockAndUpdate(pos, state);
                 world.levelEvent(1500, pos, 1);
@@ -104,18 +111,18 @@ public class AutoComposterBlockEntity extends BlockEntity {
         }
     }
 
-    protected void tickPull(Level world, BlockPos pos){
-        if(transferCoolDown > 0) return;
+    protected void tickPull(Level world, BlockPos pos) {
+        if (transferCoolDown > 0) return;
         BlockEntity be = world.getBlockEntity(pos.above());
-        if(be == null) return;
+        if (be == null) return;
         LazyOptional<IItemHandler> cap = be.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, Direction.DOWN);
         cap.ifPresent((handler) -> {
             for (int i = 0; i < handler.getSlots(); i++) {
                 ItemStack extracted = handler.extractItem(i, 1, true);
-                if(extracted.isEmpty() || !ComposterBlock.COMPOSTABLES.containsKey(extracted.getItem()))
+                if (extracted.isEmpty() || !ComposterBlock.COMPOSTABLES.containsKey(extracted.getItem()))
                     continue;
                 ItemStack rest = ItemHandlerHelper.insertItem(contents, extracted, false);
-                if(rest.getCount() == 0){
+                if (rest.getCount() == 0) {
                     handler.extractItem(i, 1, false);
                     break;
                 }
@@ -123,16 +130,16 @@ public class AutoComposterBlockEntity extends BlockEntity {
         });
     }
 
-    protected void tickPush(Level world, BlockPos pos){
-        if(transferCoolDown > 0) return;
+    protected void tickPush(Level world, BlockPos pos) {
+        if (transferCoolDown > 0) return;
         BlockEntity be = world.getBlockEntity(pos.below());
-        if(be == null) return;
+        if (be == null) return;
         LazyOptional<IItemHandler> cap = be.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, Direction.DOWN);
         cap.ifPresent((handler) -> {
             for (int i = 5; i < 10; i++) {
                 ItemStack extracted = contents.extractItem(i, 1, true);
                 ItemStack rest = ItemHandlerHelper.insertItem(handler, extracted, false);
-                if(rest.getCount() == 0){
+                if (rest.getCount() == 0) {
                     contents.extractItem(i, 1, false);
                     break;
                 }
@@ -140,23 +147,25 @@ public class AutoComposterBlockEntity extends BlockEntity {
         });
     }
 
-    protected int getConsumeCoolDown(){
+    protected int getConsumeCoolDown() {
+        return 8;
+    }
+
+    protected int getTransferCoolDown() {
         return 7;
     }
 
-    protected int getTransferCoolDown(){
-        return 7;
-    }
-
-    protected int getCompostCoolDown(){
+    protected int getCompostCoolDown() {
         return 20;
     }
 
-    protected void afterConsumed(){}
+    protected void afterConsumed() {
+    }
 
-    protected void afterCompost(){}
+    protected void afterCompost() {
+    }
 
-    protected float getChance(Item item){
+    protected float getChance(Item item) {
         return ComposterBlock.COMPOSTABLES.getFloat(item);
     }
 
@@ -180,24 +189,24 @@ public class AutoComposterBlockEntity extends BlockEntity {
     @NotNull
     @Override
     public <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction side) {
-        if(cap == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
+        if (cap == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
             return lazyItemHandler.cast();
         }
         return super.getCapability(cap, side);
     }
 
-    public NonNullList<ItemStack> getContents(){
+    public NonNullList<ItemStack> getContents() {
         return contents.getStacks();
     }
 
-    public IItemHandler getItemHandler(){
+    public IItemHandler getItemHandler() {
         return contents;
     }
 
     class ContentStack extends ItemStackHandler {
         public static final String TAG_NAME = "inv";
 
-        private ContentStack(){
+        private ContentStack() {
             super(10);
         }
 
@@ -212,7 +221,7 @@ public class AutoComposterBlockEntity extends BlockEntity {
             return slot >= 0 && slot < 5 && ComposterBlock.COMPOSTABLES.containsKey(stack.getItem());
         }
 
-        public NonNullList<ItemStack> getStacks(){
+        public NonNullList<ItemStack> getStacks() {
             return stacks;
         }
     }

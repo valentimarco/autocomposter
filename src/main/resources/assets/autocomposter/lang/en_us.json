@@ -2,5 +2,6 @@
   "item.autocomposter.autocomposter": "Auto Composter",
   "item.autocomposter.powercomposter": "Industrial Composter",
   "block.autocomposter.autocomposter": "Auto Composter",
-  "block.autocomposter.powercomposter": "Industrial Composter"
+  "block.autocomposter.powercomposter": "Industrial Composter",
+  "itemGroup.autocomposter": "Auto Composter"
 }
