@@ -1,21 +1,26 @@
 package com.eslym.autocomposter;
 
-import com.eslym.autocomposter.blocks.AutoComposterScreen;
+import com.eslym.autocomposter.blocks.PowerComposterBlock;
+import com.eslym.autocomposter.screens.AutoComposterScreen;
 import com.mojang.logging.LogUtils;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.material.Fluids;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.minecraftforge.fml.event.lifecycle.FMLDedicatedServerSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
+
+import static com.eslym.autocomposter.blocks.PowerComposterBlock.BOOSTABLES;
 
 // The value here should match an entry in the META-INF/mods.toml file
 @Mod(AutoComposterMod.MODID)
@@ -32,8 +37,8 @@ public class AutoComposterMod
         // Register the setup method for modloading
         FMLJavaModLoadingContext context = FMLJavaModLoadingContext.get();
         context.getModEventBus().addListener(this::setup);
+        context.getModEventBus().addListener(this::clientSetup);
         Registries.register(context.getModEventBus());
-
         // Register ourselves for server and other game events we are interested in
         MinecraftForge.EVENT_BUS.register(this);
     }
@@ -43,14 +48,12 @@ public class AutoComposterMod
         event.enqueueWork(()->{
             MenuScreens.register(Registries.Menus.AUTO_COMPOSTER.get(), AutoComposterScreen::new);
         });
+        PowerComposterBlock.bootstrap();
     }
 
-    @Mod.EventBusSubscriber(bus= Mod.EventBusSubscriber.Bus.MOD, value= Dist.CLIENT)
-    public static class ClientSideHandler{
-        @SubscribeEvent
-        public static void clientSetup(FMLClientSetupEvent event){
-            ItemBlockRenderTypes.setRenderLayer(Registries.Blocks.AUTO_COMPOSTER.get(), RenderType.translucent());
-        }
+    private void clientSetup(FMLClientSetupEvent event){
+        ItemBlockRenderTypes.setRenderLayer(Registries.Blocks.AUTO_COMPOSTER.get(), RenderType.translucent());
+        ItemBlockRenderTypes.setRenderLayer(Registries.Blocks.POWER_COMPOSTER.get(), RenderType.translucent());
     }
 
     public static class CreativeTab extends CreativeModeTab {

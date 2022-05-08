@@ -1,0 +1,13 @@
+{
+  "variants": {
+    "level=0": { "model": "autocomposter:block/powercomposter" },
+    "level=1": { "model": "autocomposter:block/powercomposter_lv1" },
+    "level=2": { "model": "autocomposter:block/powercomposter_lv2" },
+    "level=3": { "model": "autocomposter:block/powercomposter_lv3" },
+    "level=4": { "model": "autocomposter:block/powercomposter_lv4" },
+    "level=5": { "model": "autocomposter:block/powercomposter_lv5" },
+    "level=6": { "model": "autocomposter:block/powercomposter_lv6" },
+    "level=7": { "model": "autocomposter:block/powercomposter_lv7" },
+    "level=8": { "model": "autocomposter:block/powercomposter_lv8" }
+  }
+}

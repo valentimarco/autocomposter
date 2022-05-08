@@ -1,4 +1,4 @@
-package com.eslym.autocomposter.blocks;
+package com.eslym.autocomposter.blocks.entities;
 
 import com.eslym.autocomposter.Registries;
 import com.eslym.autocomposter.utils.ExtractLockItemStackHandlerWrapper;
@@ -14,6 +14,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.ComposterBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraftforge.common.capabilities.Capability;
@@ -23,7 +24,6 @@ import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraftforge.items.ItemStackHandler;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 public class AutoComposterBlockEntity extends BlockEntity {
 
@@ -36,13 +36,17 @@ public class AutoComposterBlockEntity extends BlockEntity {
     private final ExtractLockItemStackHandlerWrapper wrappedHandler = new ExtractLockItemStackHandlerWrapper(contents, i -> i < 5);
     protected LazyOptional<IItemHandler> lazyItemHandler = LazyOptional.of(() -> wrappedHandler);
 
-    private int consumeCoolDown = getConsumeCoolDown();
-    private int compostCoolDown = getCompostCoolDown();
+    private int consumeCoolDown = 8;
+    private int compostCoolDown = 20;
 
-    private int transferCoolDown = getTransferCoolDown();
+    private int transferCoolDown = 7;
 
     public AutoComposterBlockEntity(BlockPos pos, BlockState state) {
         super(Registries.BlockEntities.AUTO_COMPOSTER.get(), pos, state);
+    }
+
+    protected AutoComposterBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
+        super(type, pos, state);
     }
 
     public void serverTick(Level world, BlockPos pos) {
@@ -81,8 +85,6 @@ public class AutoComposterBlockEntity extends BlockEntity {
             world.playSound(null, pos, SoundEvents.COMPOSTER_READY, SoundSource.BLOCKS, 1.0F, 1.0F);
             BlockState state = getBlockState().setValue(BlockStateProperties.LEVEL_COMPOSTER, 8);
             world.setBlockAndUpdate(pos, state);
-            compostCoolDown = getCompostCoolDown();
-            afterCompost();
             return;
         }
         if (consumeCoolDown > 0) {
@@ -103,7 +105,9 @@ public class AutoComposterBlockEntity extends BlockEntity {
                 world.levelEvent(1500, pos, 0);
             }
             consumeCoolDown = getConsumeCoolDown();
-            afterConsumed();
+            if (level == 6) { // The next level is full
+                compostCoolDown = getCompostCoolDown();
+            }
             break;
         }
     }
@@ -156,12 +160,6 @@ public class AutoComposterBlockEntity extends BlockEntity {
         return 20;
     }
 
-    protected void afterConsumed() {
-    }
-
-    protected void afterCompost() {
-    }
-
     protected float getChance(Item item) {
         return ComposterBlock.COMPOSTABLES.getFloat(item);
     }
@@ -185,16 +183,16 @@ public class AutoComposterBlockEntity extends BlockEntity {
 
     @NotNull
     @Override
-    public <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap, @Nullable Direction side) {
+    public <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap) {
         if (cap == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
             return lazyItemHandler.cast();
         }
-        return super.getCapability(cap, side);
+        return super.getCapability(cap);
     }
 
     @Override
-    public void setRemoved() {
-        super.setRemoved();
+    public void invalidateCaps() {
+        super.invalidateCaps();
         lazyItemHandler.invalidate();
     }
 

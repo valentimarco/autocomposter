@@ -1,6 +1,7 @@
-package com.eslym.autocomposter.blocks;
+package com.eslym.autocomposter.menus;
 
 import com.eslym.autocomposter.Registries;
+import com.eslym.autocomposter.blocks.entities.AutoComposterBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -33,15 +34,7 @@ public class AutoComposterMenu extends AbstractContainerMenu {
         this.blockEntity = (AutoComposterBlockEntity) world.getBlockEntity(pos);
 
         if(this.blockEntity != null){
-            IItemHandler handler = blockEntity.getItemHandler();
-
-            for(int j = 0; j < 5; ++j) {
-                this.addSlot(new SlotItemHandler(handler, j, 21 + j * 18, 20));
-            }
-
-            for(int j = 0; j < 5; ++j) {
-                this.addSlot(new SlotItemHandler(handler, j + 5, 21 + j * 18, 46));
-            }
+            addComposterSlots(blockEntity.getItemHandler(), 21, 20);
 
             for(int l = 0; l < 3; ++l) {
                 for(int k = 0; k < 9; ++k) {
@@ -52,6 +45,16 @@ public class AutoComposterMenu extends AbstractContainerMenu {
             for(int i = 0; i < 9; ++i) {
                 this.addSlot(new Slot(playerInventory, i, 8 + i * 18, 141));
             }
+        }
+    }
+
+    public void addComposterSlots(IItemHandler handler, int x, int y){
+        for(int j = 0; j < 5; ++j) {
+            this.addSlot(new SlotItemHandler(handler, j, x + j * 18, y));
+        }
+
+        for(int j = 0; j < 5; ++j) {
+            this.addSlot(new SlotItemHandler(handler, j + 5, x + j * 18, y + 26));
         }
     }
 

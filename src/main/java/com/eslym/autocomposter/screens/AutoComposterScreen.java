@@ -1,5 +1,6 @@
-package com.eslym.autocomposter.blocks;
+package com.eslym.autocomposter.screens;
 
+import com.eslym.autocomposter.menus.AutoComposterMenu;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
@@ -15,7 +16,7 @@ public class AutoComposterScreen extends AbstractContainerScreen<AutoComposterMe
 
     public static final ResourceLocation GUI = new ResourceLocation(MODID, "textures/gui/container/autocomposter.png");
 
-    public AutoComposterScreen(AutoComposterMenu menu, Inventory inv, Component name){
+    public AutoComposterScreen(AutoComposterMenu menu, Inventory inv, Component name) {
         super(menu, inv, name);
         this.passEvents = false;
         this.imageHeight = 165;
@@ -36,14 +37,15 @@ public class AutoComposterScreen extends AbstractContainerScreen<AutoComposterMe
         int x = (this.width - this.imageWidth) / 2;
         int y = (this.height - this.imageHeight) / 2;
         this.blit(matrixStack, x, y, 0, 0, this.imageWidth, this.imageHeight);
+        this.renderCompostLevel(matrixStack, x + 128, y + 29);
+    }
 
+    protected void renderCompostLevel(@NotNull PoseStack matrixStack, int x, int y) {
         int level = menu.getCompostLevel();
-        x += 128;
-        y += 29;
-        if(level == 8){
+        if (level == 8) {
             this.blit(matrixStack, x, y, 24, 165, 24, 24);
-        } else if(level > 0){
-            int height = (int)(24.0f * level / 7);
+        } else if (level > 0) {
+            int height = (int) (24.0f * level / 7);
             int offset = 24 - height;
             int resOffset = 165 + offset;
             this.blit(matrixStack, x, y + offset, 0, resOffset, 24, height);

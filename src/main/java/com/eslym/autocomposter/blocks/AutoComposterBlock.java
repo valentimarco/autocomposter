@@ -1,5 +1,7 @@
 package com.eslym.autocomposter.blocks;
 
+import com.eslym.autocomposter.blocks.entities.AutoComposterBlockEntity;
+import com.eslym.autocomposter.menus.AutoComposterMenu;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
@@ -27,11 +29,18 @@ import net.minecraftforge.network.NetworkHooks;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class AutoComposter extends Block implements EntityBlock {
+public class AutoComposterBlock extends Block implements EntityBlock {
+
+    protected static final BlockBehaviour.Properties PROPERTIES =
+            BlockBehaviour.Properties
+                    .of(Material.METAL)
+                    .strength(1.0f)
+                    .noOcclusion();
+
     public static final String BLOCK_ID = "autocomposter";
 
-    public AutoComposter(){
-        super(BlockBehaviour.Properties.of(Material.METAL).strength(1.0f).noOcclusion());
+    public AutoComposterBlock() {
+        super(PROPERTIES);
         this.registerDefaultState(this.stateDefinition.any().setValue(BlockStateProperties.LEVEL_COMPOSTER, 0));
     }
 
@@ -49,24 +58,27 @@ public class AutoComposter extends Block implements EntityBlock {
     @SuppressWarnings({"deprecation", "NullableProblems"})
     @Override
     public InteractionResult use(@NotNull BlockState state, Level world, @NotNull BlockPos pos, @NotNull Player player, @NotNull InteractionHand hand, @NotNull BlockHitResult hit) {
-        if(!world.isClientSide){
+        if (!world.isClientSide) {
             BlockEntity be = world.getBlockEntity(pos);
-            if(be instanceof AutoComposterBlockEntity){
-                MenuProvider menu = new MenuProvider() {
-                    @Override
-                    public Component getDisplayName() {
-                        return new TranslatableComponent("block.autocomposter.autocomposter");
-                    }
-
-                    @Override
-                    public AbstractContainerMenu createMenu(int windowId, Inventory inv, Player p) {
-                        return new AutoComposterMenu(windowId, world, pos, inv, p);
-                    }
-                };
-                NetworkHooks.openGui((ServerPlayer)player, menu, pos);
+            if (be instanceof AutoComposterBlockEntity) {
+                NetworkHooks.openGui((ServerPlayer) player, createMenu(world, pos), pos);
             }
         }
         return InteractionResult.SUCCESS;
+    }
+
+    protected MenuProvider createMenu(Level world, BlockPos pos){
+        return new MenuProvider() {
+            @Override
+            public @NotNull Component getDisplayName() {
+                return new TranslatableComponent("block.autocomposter.autocomposter");
+            }
+
+            @Override
+            public AbstractContainerMenu createMenu(int windowId, @NotNull Inventory inv, @NotNull Player p) {
+                return new AutoComposterMenu(windowId, world, pos, inv, p);
+            }
+        };
     }
 
     @SuppressWarnings("deprecation")
@@ -84,9 +96,9 @@ public class AutoComposter extends Block implements EntityBlock {
     @SuppressWarnings("deprecation")
     @Override
     public void onRemove(BlockState oldBlock, @NotNull Level level, @NotNull BlockPos pos, BlockState newBlock, boolean someBool) {
-        if(!oldBlock.is(newBlock.getBlock())){
+        if (!oldBlock.is(newBlock.getBlock())) {
             BlockEntity be = level.getBlockEntity(pos);
-            if(be instanceof AutoComposterBlockEntity){
+            if (be instanceof AutoComposterBlockEntity) {
                 Containers.dropContents(level, pos, ((AutoComposterBlockEntity) be).getContents());
                 level.updateNeighbourForOutputSignal(pos, this);
             }
@@ -97,11 +109,11 @@ public class AutoComposter extends Block implements EntityBlock {
     @Nullable
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(@NotNull Level level, @NotNull BlockState state, @NotNull BlockEntityType<T> type) {
-        if(level.isClientSide()){
+        if (level.isClientSide()) {
             return null;
         } else {
-            return (l, p, s ,t)->{
-                if(t instanceof AutoComposterBlockEntity){
+            return (l, p, s, t) -> {
+                if (t instanceof AutoComposterBlockEntity) {
                     ((AutoComposterBlockEntity) t).serverTick(l, p);
                 }
             };
