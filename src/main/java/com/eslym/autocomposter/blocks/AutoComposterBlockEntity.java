@@ -1,7 +1,7 @@
 package com.eslym.autocomposter.blocks;
 
 import com.eslym.autocomposter.Registries;
-import com.eslym.autocomposter.utils.ExtractProtectItemStackHandlerWrapper;
+import com.eslym.autocomposter.utils.ExtractLockItemStackHandlerWrapper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.NonNullList;
@@ -25,9 +25,6 @@ import net.minecraftforge.items.ItemStackHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
 public class AutoComposterBlockEntity extends BlockEntity {
 
     protected static final String TAG_CONSUME_CD = "consumeCoolDown";
@@ -36,7 +33,7 @@ public class AutoComposterBlockEntity extends BlockEntity {
 
     protected ContentStack contents = new ContentStack();
 
-    private final ExtractProtectItemStackHandlerWrapper wrappedHandler = new ExtractProtectItemStackHandlerWrapper(contents, Stream.of(0, 1, 2, 3, 4).collect(Collectors.toList()));
+    private final ExtractLockItemStackHandlerWrapper wrappedHandler = new ExtractLockItemStackHandlerWrapper(contents, i -> i < 5);
     protected LazyOptional<IItemHandler> lazyItemHandler = LazyOptional.of(() -> wrappedHandler);
 
     private int consumeCoolDown = getConsumeCoolDown();
@@ -193,6 +190,12 @@ public class AutoComposterBlockEntity extends BlockEntity {
             return lazyItemHandler.cast();
         }
         return super.getCapability(cap, side);
+    }
+
+    @Override
+    public void setRemoved() {
+        super.setRemoved();
+        lazyItemHandler.invalidate();
     }
 
     public NonNullList<ItemStack> getContents() {

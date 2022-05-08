@@ -6,18 +6,9 @@ import net.minecraftforge.items.IItemHandlerModifiable;
 import net.minecraftforge.items.ItemStackHandler;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.function.Predicate;
 
-public class ExtractProtectItemStackHandlerWrapper implements IItemHandler, IItemHandlerModifiable {
-    private final ItemStackHandler source;
-    private final List<Integer> protectedSlots;
-
-    public ExtractProtectItemStackHandlerWrapper(ItemStackHandler source, Collection<Integer> protectedSlots){
-        this.source = source;
-        this.protectedSlots = new ArrayList<>(protectedSlots);
-    }
+public record ExtractLockItemStackHandlerWrapper(ItemStackHandler source, Predicate<Integer> shouldLock) implements IItemHandler, IItemHandlerModifiable {
 
     @Override
     public void setStackInSlot(int slot, @NotNull ItemStack stack) {
@@ -44,7 +35,7 @@ public class ExtractProtectItemStackHandlerWrapper implements IItemHandler, IIte
     @NotNull
     @Override
     public ItemStack extractItem(int slot, int amount, boolean simulate) {
-        if(this.protectedSlots.contains(slot)){
+        if (this.shouldLock.test(slot)) {
             return ItemStack.EMPTY;
         }
         return source.extractItem(slot, amount, simulate);
