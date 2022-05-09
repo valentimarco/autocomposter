@@ -30,7 +30,15 @@ public class PowerComposterBlockEntity extends AutoComposterBlockEntity implemen
 
     public static final int WATER_CAPACITY = 5000;
 
-    protected EnergyStorage energy = new EnergyStorage(ENERGY_CAPACITY, 50, 50);
+    public static final int ENERGY_TRANSFER_RATE = 50;
+
+    public static final int CONSUME_COST = 5;
+
+    public static final int COMPOST_COST = 10;
+
+    public static final int WATER_COST = 5;
+
+    protected EnergyStorage energy = new EnergyStorage(ENERGY_CAPACITY, ENERGY_TRANSFER_RATE, ENERGY_TRANSFER_RATE);
 
     protected LazyOptional<IEnergyStorage> lazyEnergy = LazyOptional.of(() -> energy);
 
@@ -49,8 +57,8 @@ public class PowerComposterBlockEntity extends AutoComposterBlockEntity implemen
 
     @Override
     protected int getConsumeCoolDown() {
-        if(energy.getEnergyStored() >= 5){
-            energy.extractEnergy(5, false);
+        if(energy.getEnergyStored() >= CONSUME_COST){
+            energy.extractEnergy(CONSUME_COST, false);
             return 4;
         }
         return super.getConsumeCoolDown();
@@ -58,8 +66,8 @@ public class PowerComposterBlockEntity extends AutoComposterBlockEntity implemen
 
     @Override
     protected int getCompostCoolDown() {
-        if(energy.getEnergyStored() >= 10){
-            energy.extractEnergy(10, false);
+        if(energy.getEnergyStored() >= COMPOST_COST){
+            energy.extractEnergy(COMPOST_COST, false);
             return 10;
         }
         return super.getCompostCoolDown();
@@ -68,8 +76,8 @@ public class PowerComposterBlockEntity extends AutoComposterBlockEntity implemen
     @Override
     protected float getChance(Item item) {
         float chance = super.getChance(item);
-        if(fluid.getFluidAmount() >= 5){
-            fluid.drain(5, IFluidHandler.FluidAction.EXECUTE);
+        if(fluid.getFluidAmount() >= WATER_COST){
+            fluid.drain(WATER_COST, IFluidHandler.FluidAction.EXECUTE);
             chance *= 1.1;
         }
         return chance;
