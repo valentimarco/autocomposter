@@ -14,7 +14,10 @@ import static com.eslym.autocomposter.AutoComposterMod.MODID;
 
 public class AutoComposterScreen extends AbstractContainerScreen<AutoComposterMenu> {
 
-    public static final ResourceLocation GUI = new ResourceLocation(MODID, "textures/gui/container/autocomposter.png");
+    protected ResourceLocation GUI = new ResourceLocation(MODID, "textures/gui/container/autocomposter.png");
+
+    protected int startX = 0;
+    protected int startY = 0;
 
     public AutoComposterScreen(AutoComposterMenu menu, Inventory inv, Component name) {
         super(menu, inv, name);
@@ -25,6 +28,9 @@ public class AutoComposterScreen extends AbstractContainerScreen<AutoComposterMe
 
     @Override
     public void render(@NotNull PoseStack matrixStack, int mouseX, int mouseY, float partialTicks) {
+        startX = (this.width - this.imageWidth) / 2;
+        startY = (this.height - this.imageHeight) / 2;
+
         this.renderBackground(matrixStack);
         super.render(matrixStack, mouseX, mouseY, partialTicks);
         this.renderTooltip(matrixStack, mouseX, mouseY);
@@ -34,13 +40,13 @@ public class AutoComposterScreen extends AbstractContainerScreen<AutoComposterMe
         RenderSystem.setShader(GameRenderer::getPositionTexShader);
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         RenderSystem.setShaderTexture(0, GUI);
-        int x = (this.width - this.imageWidth) / 2;
-        int y = (this.height - this.imageHeight) / 2;
-        this.blit(matrixStack, x, y, 0, 0, this.imageWidth, this.imageHeight);
-        this.renderCompostLevel(matrixStack, x + 128, y + 29);
+        this.blit(matrixStack, startX, startY, 0, 0, this.imageWidth, this.imageHeight);
+        this.renderCompostLevel(matrixStack, 128, 29);
     }
 
     protected void renderCompostLevel(@NotNull PoseStack matrixStack, int x, int y) {
+        x += startX;
+        y += startY;
         int level = menu.getCompostLevel();
         if (level == 8) {
             this.blit(matrixStack, x, y, 24, 165, 24, 24);

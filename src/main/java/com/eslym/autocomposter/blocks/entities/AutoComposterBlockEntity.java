@@ -183,11 +183,11 @@ public class AutoComposterBlockEntity extends BlockEntity {
 
     @NotNull
     @Override
-    public <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap) {
+    public <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap, Direction side) {
         if (cap == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
             return lazyItemHandler.cast();
         }
-        return super.getCapability(cap);
+        return super.getCapability(cap, side);
     }
 
     @Override

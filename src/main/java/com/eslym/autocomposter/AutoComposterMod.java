@@ -1,26 +1,20 @@
 package com.eslym.autocomposter;
 
-import com.eslym.autocomposter.blocks.PowerComposterBlock;
 import com.eslym.autocomposter.screens.AutoComposterScreen;
+import com.eslym.autocomposter.screens.PowerComposterScreen;
 import com.mojang.logging.LogUtils;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.material.Fluids;
-import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.minecraftforge.fml.event.lifecycle.FMLDedicatedServerSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
-
-import static com.eslym.autocomposter.blocks.PowerComposterBlock.BOOSTABLES;
 
 // The value here should match an entry in the META-INF/mods.toml file
 @Mod(AutoComposterMod.MODID)
@@ -47,8 +41,8 @@ public class AutoComposterMod
     {
         event.enqueueWork(()->{
             MenuScreens.register(Registries.Menus.AUTO_COMPOSTER.get(), AutoComposterScreen::new);
+            MenuScreens.register(Registries.Menus.POWER_COMPOSTER.get(), PowerComposterScreen::new);
         });
-        PowerComposterBlock.bootstrap();
     }
 
     private void clientSetup(FMLClientSetupEvent event){

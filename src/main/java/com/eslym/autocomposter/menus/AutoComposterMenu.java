@@ -7,6 +7,7 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ContainerLevelAccess;
+import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -16,17 +17,26 @@ import net.minecraftforge.items.SlotItemHandler;
 import org.jetbrains.annotations.NotNull;
 
 public class AutoComposterMenu extends AbstractContainerMenu {
-    protected final Level world;
-    protected final BlockPos pos;
+    protected Level world;
+    protected BlockPos pos;
 
-    protected final Inventory playerInv;
+    protected Inventory playerInv;
 
-    protected final Player player;
+    protected Player player;
 
-    protected final AutoComposterBlockEntity blockEntity;
+    protected AutoComposterBlockEntity blockEntity;
 
     public AutoComposterMenu(int windowId, Level world, BlockPos pos, Inventory playerInventory, Player player){
         super(Registries.Menus.AUTO_COMPOSTER.get(), windowId);
+        init(world, pos, playerInventory, player);
+    }
+
+    protected AutoComposterMenu(MenuType<?> type, int windowId, Level world, BlockPos pos, Inventory playerInventory, Player player){
+        super(type, windowId);
+        init(world, pos, playerInventory, player);
+    }
+
+    protected void init(Level world, BlockPos pos, Inventory playerInventory, Player player){
         this.world = world;
         this.pos = pos;
         this.playerInv = playerInventory;

@@ -3,5 +3,7 @@
   "item.autocomposter.powercomposter": "工業堆肥桶",
   "block.autocomposter.autocomposter": "自動堆肥桶",
   "block.autocomposter.powercomposter": "工業堆肥桶",
-  "itemGroup.autocomposter": "自動堆肥桶"
+  "itemGroup.autocomposter": "自動堆肥桶",
+  "tooltip.autocomposter.energy": "能量",
+  "tooltip.autocomposter.water": "水"
 }

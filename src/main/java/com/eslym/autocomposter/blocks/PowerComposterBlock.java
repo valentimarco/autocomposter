@@ -1,10 +1,7 @@
 package com.eslym.autocomposter.blocks;
 
 import com.eslym.autocomposter.blocks.entities.PowerComposterBlockEntity;
-import com.eslym.autocomposter.menus.AutoComposterMenu;
-import it.unimi.dsi.fastutil.objects.Object2FloatMap;
-import it.unimi.dsi.fastutil.objects.Object2FloatMaps;
-import it.unimi.dsi.fastutil.objects.Object2FloatOpenHashMap;
+import com.eslym.autocomposter.menus.PowerComposterMenu;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
@@ -15,20 +12,12 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.material.Fluid;
-import net.minecraft.world.level.material.Fluids;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class PowerComposterBlock extends AutoComposterBlock {
 
     public static final String BLOCK_ID = "powercomposter";
-
-    public static final Object2FloatMap<Fluid> BOOSTABLES = new Object2FloatOpenHashMap<>();
-
-    public static void bootstrap(){
-        BOOSTABLES.put(Fluids.WATER, 1.1f);
-    }
 
     @Override
     public @Nullable BlockEntity newBlockEntity(@NotNull BlockPos pos, @NotNull BlockState state) {
@@ -45,7 +34,7 @@ public class PowerComposterBlock extends AutoComposterBlock {
 
             @Override
             public AbstractContainerMenu createMenu(int windowId, @NotNull Inventory inv, @NotNull Player p) {
-                return new AutoComposterMenu(windowId, world, pos, inv, p);
+                return new PowerComposterMenu(windowId, world, pos, inv, p);
             }
         };
     }

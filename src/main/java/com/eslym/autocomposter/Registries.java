@@ -1,10 +1,11 @@
 package com.eslym.autocomposter;
 
-import com.eslym.autocomposter.blocks.entities.PowerComposterBlockEntity;
 import com.eslym.autocomposter.blocks.AutoComposterBlock;
-import com.eslym.autocomposter.blocks.entities.AutoComposterBlockEntity;
 import com.eslym.autocomposter.blocks.PowerComposterBlock;
+import com.eslym.autocomposter.blocks.entities.AutoComposterBlockEntity;
+import com.eslym.autocomposter.blocks.entities.PowerComposterBlockEntity;
 import com.eslym.autocomposter.menus.AutoComposterMenu;
+import com.eslym.autocomposter.menus.PowerComposterMenu;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -85,6 +86,9 @@ public final class Registries {
 
         public static final RegistryObject<MenuType<AutoComposterMenu>> AUTO_COMPOSTER = REGISTRIES
                 .register(AutoComposterBlock.BLOCK_ID, buildMenuType(AutoComposterMenu::new));
+
+        public static final RegistryObject<MenuType<PowerComposterMenu>> POWER_COMPOSTER = REGISTRIES
+                .register(PowerComposterBlock.BLOCK_ID, buildMenuType(PowerComposterMenu::new));
 
     }
 }

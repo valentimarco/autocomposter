@@ -1,9 +1,11 @@
 package com.eslym.autocomposter.blocks.entities;
 
 import com.eslym.autocomposter.Registries;
-import com.eslym.autocomposter.blocks.PowerComposterBlock;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.IntTag;
+import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluids;
@@ -18,19 +20,21 @@ import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.templates.FluidTank;
 import org.jetbrains.annotations.NotNull;
 
-import static com.eslym.autocomposter.blocks.PowerComposterBlock.BOOSTABLES;
-
-public class PowerComposterBlockEntity extends AutoComposterBlockEntity {
+public class PowerComposterBlockEntity extends AutoComposterBlockEntity implements ContainerData {
 
     protected static final String TAG_ENERGY = "energy";
 
     protected static final String TAG_FLUID = "water";
 
-    protected EnergyStorage energy = new EnergyStorage(5000, 50, 50);
+    public static final int ENERGY_CAPACITY = 5000;
+
+    public static final int WATER_CAPACITY = 5000;
+
+    protected EnergyStorage energy = new EnergyStorage(ENERGY_CAPACITY, 50, 50);
 
     protected LazyOptional<IEnergyStorage> lazyEnergy = LazyOptional.of(() -> energy);
 
-    protected FluidTank fluid = new FluidTank(5000, f -> BOOSTABLES.containsKey(f.getFluid())) {
+    protected FluidTank fluid = new FluidTank(WATER_CAPACITY, f -> f.getFluid().isSame(Fluids.WATER)) {
         @Override
         protected void onContentsChanged() {
             setChanged();
@@ -66,22 +70,21 @@ public class PowerComposterBlockEntity extends AutoComposterBlockEntity {
         float chance = super.getChance(item);
         if(fluid.getFluidAmount() >= 5){
             fluid.drain(5, IFluidHandler.FluidAction.EXECUTE);
-            float boost = BOOSTABLES.getFloat(fluid.getFluid());
-            chance *= boost;
+            chance *= 1.1;
         }
         return chance;
     }
 
     @NotNull
     @Override
-    public <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap) {
+    public <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap, Direction side) {
         if(cap == CapabilityEnergy.ENERGY){
             return lazyEnergy.cast();
         }
         if (cap == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY){
             return lazyFluid.cast();
         }
-        return super.getCapability(cap);
+        return super.getCapability(cap, side);
     }
 
     @Override
@@ -96,5 +99,28 @@ public class PowerComposterBlockEntity extends AutoComposterBlockEntity {
         super.load(tag);
         energy.deserializeNBT(tag.get(TAG_ENERGY));
         fluid.setFluid(new FluidStack(Fluids.WATER, tag.getInt(TAG_FLUID)));
+    }
+
+    @Override
+    public int get(int index) {
+        return switch (index) {
+            case 0 -> energy.getEnergyStored();
+            case 1 -> fluid.getFluidAmount();
+            default -> throw new IndexOutOfBoundsException();
+        };
+    }
+
+    @Override
+    public void set(int index, int value) {
+        switch (index) {
+            case 0 -> energy.deserializeNBT(IntTag.valueOf(value));
+            case 1 -> fluid.setFluid(new FluidStack(Fluids.WATER, value));
+            default -> throw new IndexOutOfBoundsException();
+        }
+    }
+
+    @Override
+    public int getCount() {
+        return 2;
     }
 }
