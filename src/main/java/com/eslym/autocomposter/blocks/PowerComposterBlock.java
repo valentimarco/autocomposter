@@ -1,7 +1,6 @@
 package com.eslym.autocomposter.blocks;
 
 import com.eslym.autocomposter.blocks.entities.PowerComposterBlockEntity;
-import com.eslym.autocomposter.menus.AutoComposterMenu;
 import com.eslym.autocomposter.menus.PowerComposterMenu;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;

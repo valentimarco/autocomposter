@@ -25,6 +25,7 @@ import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraftforge.items.ItemStackHandler;
 import org.jetbrains.annotations.NotNull;
 
+@SuppressWarnings("ClassEscapesDefinedScope")
 public class AutoComposterBlockEntity extends BlockEntity {
 
     protected static final String TAG_CONSUME_CD = "consumeCoolDown";

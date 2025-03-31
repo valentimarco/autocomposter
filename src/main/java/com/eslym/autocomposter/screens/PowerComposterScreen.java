@@ -16,6 +16,7 @@ import static com.eslym.autocomposter.AutoComposterMod.MODID;
 import static com.eslym.autocomposter.blocks.entities.PowerComposterBlockEntity.ENERGY_CAPACITY;
 import static com.eslym.autocomposter.blocks.entities.PowerComposterBlockEntity.WATER_CAPACITY;
 
+@SuppressWarnings("OptionalUsedAsFieldOrParameterType")
 public class PowerComposterScreen extends AutoComposterScreen {
     protected Component energyTooltip = 
              Component.translatable("tooltip.autocomposter.energy");

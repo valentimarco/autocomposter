@@ -8,9 +8,6 @@ import com.eslym.autocomposter.menus.AutoComposterMenu;
 import com.eslym.autocomposter.menus.PowerComposterMenu;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.CreativeModeTab;
@@ -126,13 +123,11 @@ public final class Registries {
                 create(net.minecraft.core.registries.Registries.CREATIVE_MODE_TAB, MODID);
 
         public static final RegistryObject<CreativeModeTab> AUTOCOMPOSTER_TAB = CREATIVE_MODE_TAB_DEFERRED_REGISTER
-                .register("autocomposter_tab",
+                .register(MODID + "tab",
                 () -> CreativeModeTab.builder()
                         .title(Component.translatable("itemGroup.autocomposter"))
-                        .icon(() -> new ItemStack(Items.AUTO_COMPOSTER.get())) // Or your own item
+                        .icon(() -> new ItemStack(Items.AUTO_COMPOSTER.get()))
                         .displayItems((parameters, output) -> {
-                            // Add your items to the tab here
-                            // Example: output.accept(YourItems.SOME_ITEM.get());
                             output.accept(Items.AUTO_COMPOSTER.get());
                             output.accept(Items.POWER_COMPOSTER.get());
                         }).build());
