@@ -9,10 +9,13 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.registries.RegistryObject;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 
@@ -21,7 +24,7 @@ import org.slf4j.Logger;
 public class AutoComposterMod
 {
     public static final String MODID = "autocomposter";
-    public static final CreativeTab CREATIVE_TAB = new CreativeTab();
+//    public static final RegistryObject<CreativeModeTab> CREATIVE_TAB =  
 
     // Directly reference a slf4j logger
     private static final Logger LOGGER = LogUtils.getLogger();
@@ -50,15 +53,15 @@ public class AutoComposterMod
         ItemBlockRenderTypes.setRenderLayer(Registries.Blocks.POWER_COMPOSTER.get(), RenderType.translucent());
     }
 
-    public static class CreativeTab extends CreativeModeTab {
-
-        public CreativeTab() {
-            super(MODID);
-        }
-
-        @Override
-        public @NotNull ItemStack makeIcon() {
-            return new ItemStack(Registries.Items.AUTO_COMPOSTER.get());
-        }
-    }
+    
+    //TODO: REVIEW THIS FOR CREATIVE TABS
+//    @SubscribeEvent
+//    public void buildContents(BuildCreativeModeTabContentsEvent event) {
+//        // Add to ingredients tab
+//        if (event.getTabKey() == CreativeModeTabs.INGREDIENTS) {
+//            event.accept(ITEM);
+//            event.accept(BLOCK); // Takes in an ItemLike, assumes block has registered item
+//        }
+//    }
+    
 }

@@ -2,10 +2,14 @@ package com.eslym.autocomposter.blocks;
 
 import com.eslym.autocomposter.blocks.entities.AutoComposterBlockEntity;
 import com.eslym.autocomposter.menus.AutoComposterMenu;
+import net.minecraft.client.resources.model.Material;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.ComponentContents;
+import net.minecraft.network.chat.Style;
+import net.minecraft.network.chat.contents.TranslatableContents;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -16,6 +20,7 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.EntityBlock;
+import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -23,17 +28,19 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
-import net.minecraft.world.level.material.Material;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraftforge.network.NetworkHooks;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
+
 public class AutoComposterBlock extends Block implements EntityBlock {
 
     protected static final BlockBehaviour.Properties PROPERTIES =
             BlockBehaviour.Properties
-                    .of(Material.METAL)
+                    .of()
+                    .sound(SoundType.METAL)
                     .strength(1.0f)
                     .noOcclusion();
 
@@ -55,23 +62,45 @@ public class AutoComposterBlock extends Block implements EntityBlock {
         definition.add(BlockStateProperties.LEVEL_COMPOSTER);
     }
 
-    @SuppressWarnings({"deprecation", "NullableProblems"})
-    @Override
-    public InteractionResult use(@NotNull BlockState state, Level world, @NotNull BlockPos pos, @NotNull Player player, @NotNull InteractionHand hand, @NotNull BlockHitResult hit) {
-        if (!world.isClientSide) {
-            BlockEntity be = world.getBlockEntity(pos);
-            if (be instanceof AutoComposterBlockEntity) {
-                NetworkHooks.openGui((ServerPlayer) player, createMenu(world, pos), pos);
-            }
-        }
-        return InteractionResult.SUCCESS;
-    }
+//    @SuppressWarnings({"deprecation", "NullableProblems"})
+//    @Override
+//    public InteractionResult use(@NotNull BlockState state, Level world, @NotNull BlockPos pos, @NotNull Player player, @NotNull InteractionHand hand, @NotNull BlockHitResult hit) {
+//        if (!world.isClientSide) {
+//            BlockEntity be = world.getBlockEntity(pos);
+//            if (be instanceof AutoComposterBlockEntity) {
+//                NetworkHooks.openGui((ServerPlayer) player, createMenu(world, pos), pos);
+//            }
+//        }
+//        return InteractionResult.SUCCESS;
+//    }
 
     protected MenuProvider createMenu(Level world, BlockPos pos){
         return new MenuProvider() {
             @Override
             public @NotNull Component getDisplayName() {
-                return new TranslatableComponent("block.autocomposter.autocomposter");
+//                return new TranslatableContents("block.autocomposter.autocomposter", null, TranslatableContents.NO_ARGS);
+                //TODO: TEMP FOR FIRST TIME RUNNING
+                return new Component() {
+                    @Override
+                    public Style getStyle() {
+                        return null;
+                    }
+
+                    @Override
+                    public ComponentContents getContents() {
+                        return null;
+                    }
+
+                    @Override
+                    public List<Component> getSiblings() {
+                        return List.of();
+                    }
+
+                    @Override
+                    public FormattedCharSequence getVisualOrderText() {
+                        return null;
+                    }
+                };
             }
 
             @Override
