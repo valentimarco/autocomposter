@@ -7,12 +7,15 @@ import com.eslym.autocomposter.blocks.entities.PowerComposterBlockEntity;
 import com.eslym.autocomposter.menus.AutoComposterMenu;
 import com.eslym.autocomposter.menus.PowerComposterMenu;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -34,6 +37,7 @@ public final class Registries {
         Blocks.BLOCK_DEFERRED_REGISTER.register(eventBus);
         BlockEntities.BLOCK_ENTITY_TYPE_DEFERRED_REGISTER.register(eventBus);
         Menus.MENU_TYPE_DEFERRED_REGISTER.register(eventBus);
+        CreativeTabs.CREATIVE_MODE_TAB_DEFERRED_REGISTER.register(eventBus);
     }
 
     public static final class Items {
@@ -94,24 +98,44 @@ public final class Registries {
 
         private static final DeferredRegister<MenuType<?>> MENU_TYPE_DEFERRED_REGISTER = DeferredRegister.
                 create(ForgeRegistries.MENU_TYPES, MODID);
-        
-        interface IMenuFactory<T extends AbstractContainerMenu> {
-            T construct(int windowId, Level world, BlockPos pos, Inventory inv, Player player);
-        }
-        private static <T extends AbstractContainerMenu> Supplier<MenuType<T>> buildMenuType(IMenuFactory<T> constructor){
-            return () -> IForgeMenuType.create((windowId, inv, data) -> {
-                BlockPos pos = data.readBlockPos();
-                Level world = inv.player.getCommandSenderWorld();
-                return constructor.construct(windowId, world, pos, inv, inv.player);
-            });
-        }
 
         public static final RegistryObject<MenuType<AutoComposterMenu>> AUTO_COMPOSTER = MENU_TYPE_DEFERRED_REGISTER
-                .register(AutoComposterBlock.BLOCK_ID, buildMenuType(AutoComposterMenu::new));
+                .register(AutoComposterBlock.BLOCK_ID, () -> IForgeMenuType.create(
+                        (containerId, playerInv, extraData) ->{
+                            BlockPos pos = extraData.readBlockPos();
+                            Level world = playerInv.player.getCommandSenderWorld();
+                            return new AutoComposterMenu(containerId, world, pos, playerInv, playerInv.player);
+                        }
+                        ));
 
         public static final RegistryObject<MenuType<PowerComposterMenu>> POWER_COMPOSTER = MENU_TYPE_DEFERRED_REGISTER
-                .register(PowerComposterBlock.BLOCK_ID, buildMenuType(PowerComposterMenu::new));
+                .register(PowerComposterBlock.BLOCK_ID, 
+                        () -> IForgeMenuType.create((containerId, 
+                                                     playerInv, 
+                                                     extraData) -> {
+                                    BlockPos pos = extraData.readBlockPos();
+                                    Level world = playerInv.player.getCommandSenderWorld();
+                                    return new PowerComposterMenu(containerId, world, pos, playerInv, playerInv.player);
+                        }
+                ));
 
+    }
+    
+    public static final class CreativeTabs {
+        private static final DeferredRegister<CreativeModeTab> CREATIVE_MODE_TAB_DEFERRED_REGISTER  = DeferredRegister.
+                create(net.minecraft.core.registries.Registries.CREATIVE_MODE_TAB, MODID);
+
+        public static final RegistryObject<CreativeModeTab> AUTOCOMPOSTER_TAB = CREATIVE_MODE_TAB_DEFERRED_REGISTER
+                .register("autocomposter_tab",
+                () -> CreativeModeTab.builder()
+                        .title(Component.translatable("itemGroup.autocomposter"))
+                        .icon(() -> new ItemStack(Items.AUTO_COMPOSTER.get())) // Or your own item
+                        .displayItems((parameters, output) -> {
+                            // Add your items to the tab here
+                            // Example: output.accept(YourItems.SOME_ITEM.get());
+                            output.accept(Items.AUTO_COMPOSTER.get());
+                            output.accept(Items.POWER_COMPOSTER.get());
+                        }).build());
     }
 }
 

@@ -34,7 +34,7 @@ public class AutoComposterMod
         // Register the setup method for modloading
         FMLJavaModLoadingContext context = FMLJavaModLoadingContext.get();
         context.getModEventBus().addListener(this::setup);
-        context.getModEventBus().addListener(this::clientSetup);
+//        context.getModEventBus().addListener(this::clientSetup);
         Registries.register(context.getModEventBus());
         // Register ourselves for server and other game events we are interested in
         MinecraftForge.EVENT_BUS.register(this);
@@ -48,9 +48,13 @@ public class AutoComposterMod
         });
     }
 
+    /**
+     * @deprecated https://docs.minecraftforge.net/en/latest/rendering/modelextensions/rendertypes/#render-types
+     */
     private void clientSetup(FMLClientSetupEvent event){
-        ItemBlockRenderTypes.setRenderLayer(Registries.Blocks.AUTO_COMPOSTER.get(), RenderType.translucent());
-        ItemBlockRenderTypes.setRenderLayer(Registries.Blocks.POWER_COMPOSTER.get(), RenderType.translucent());
+        
+//        ItemBlockRenderTypes.setRenderLayer(Registries.Blocks.AUTO_COMPOSTER.get(), RenderType.translucent());
+//        ItemBlockRenderTypes.setRenderLayer(Registries.Blocks.POWER_COMPOSTER.get(), RenderType.translucent());
     }
 
     
